@@ -1,0 +1,19 @@
+Step-1:
+1. Create a new virtual environment "conda create -p venv python=3.11.5" to give your python version
+2. Activate the virtual environment - "conda activate venv/"
+----------------------------------------------------------------
+Step-2
+1. Initialized the git
+2. Added gitignore file in both github and vs   
+----------------------------------------------------------------
+Step-3
+1. Write code for setup.py
+  - The setup.py file is a standard Python file used to package and distribute Python projects. 
+  - It’s a crucial part of the Python packaging ecosystem, allowing developers to define the project’s metadata, dependencies, and installation requirements.
+  - When a Python project includes a setup.py file, it becomes easier for others to install and use the project via tools like pip or for uploading to repositories like PyPI (Python Package Index).
+2. Write the requirements.txt file
+  - The requirements.txt file is a simple text file used in Python projects to list the external libraries or dependencies that the project needs to run. 
+  - It is commonly used to document the exact packages and their versions that your project relies on, making it easy for others to install the same dependencies.
+  - Instead of manually installing each package one by one, users can install all the required packages listed in requirements.txt with a single command:
+    --> pip install -r requirements.txt
+    

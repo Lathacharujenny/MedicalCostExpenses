@@ -1,0 +1,1 @@
+"""The __init__.py file is a special file in Python that plays a key role in defining a package. """
