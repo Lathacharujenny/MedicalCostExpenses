@@ -1,5 +1,5 @@
 # Exclude artifacts folder
-artifacts/
+ignore/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
