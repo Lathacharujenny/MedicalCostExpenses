@@ -27,5 +27,11 @@ Step-4:
 ----------------------------------------------------------------
 Step-5:
 1. Created notebook folder and to perform EDA analysis
+2. Write data_wrangling.py
+3. model_trainings.py
+-----------------------------------------------------------------
+Step-6
+1. Writing the code in the components folder
+2. data_ingestion.py, data_transformaiton.py, model_training.py
 
-    
+   

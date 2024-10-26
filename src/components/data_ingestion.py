@@ -2,11 +2,15 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 # This line added because the system is not recognizing the src module
-from src.logger import logging
+#print(sys.path)
 from src.exception import CustomException
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from dataclasses import dataclass
+from src.logger import logging
+from src.components.data_transformation import DataTransformation
+from src.components.model_trainer import ModelTrainer
+
 
 
 @dataclass
@@ -24,13 +28,19 @@ class DataIngestion:
         logging.info('Entered the data ingestion component')
         try:
             logging.info('Loading the data set')
-            df = pd.read_csv('../../data/skewed_data.csv')
+            df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'skewed_data.csv'))
+
             os.makedirs(os.path.dirname(os.path.abspath(self.ingestion_config.raw_data_path)), exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
             logging.info('Data loaded successfully, about to split into train and test sets')
+
             train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
+            logging.info('Data splitted succesfully')
+
             train_set.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
+            logging.info('Train Data splitted succesfully')
             test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
+            logging.info('Test Data splitted succesfully')
             logging.info('Ingestion of the data is completed')
             return(
                 self.ingestion_config.train_data_path,
@@ -41,9 +51,14 @@ class DataIngestion:
             raise CustomException(e, sys)
 
 if __name__ == "__main__":
-    obj = DataIngestion()
-    train_data, test_data = obj.initiate_data_ingestion()
-    print('Train data saved at: ', train_data)
-    print('Test data saved: ', test_data)
+    obj=DataIngestion()
+    train_data_path,test_data_path=obj.initiate_data_ingestion()
+    print(train_data_path)
+    print(test_data_path)
 
+    data_transformation=DataTransformation()
+    X_train_data,y_train_data,X_test_data,y_test_data,_=data_transformation.initiate_data_transformation(train_data_path,test_data_path)
+
+    model_trainer = ModelTrainer()
+    print(model_trainer.initiate_model_trainer(X_train_data, y_train_data, X_test_data, y_test_data))
 
