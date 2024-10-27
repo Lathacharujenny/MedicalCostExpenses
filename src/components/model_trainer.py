@@ -1,6 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..')))
+import pandas as pd
 from src.exception import CustomException
 from src.logger import logging
 from dataclasses import dataclass
@@ -25,6 +26,7 @@ class ModelTrainer:
     def initiate_model_trainer(self, X_train_data, y_train_data, X_test_data, y_test_data):
         try:
             logging.info('Split training and testing data')
+
             X_train, y_train, X_test, y_test = (X_train_data, y_train_data, X_test_data, y_test_data)
             models = {
                 'Linear Regression': LinearRegression(),
@@ -34,7 +36,7 @@ class ModelTrainer:
                 'Decision Tree':  DecisionTreeRegressor(random_state=42),
                 'Random Forest': RandomForestRegressor(random_state=42),
                 'AdaBoost': AdaBoostRegressor(random_state=42),
-                'Gradient Boost': GradientBoostingRegressor(random_state=42),
+                'GradientBoost': GradientBoostingRegressor(random_state=42),
                 'Xgboost': XGBRegressor(random_state=42)
             }
 
@@ -62,34 +64,41 @@ class ModelTrainer:
                     'n_estimators': list(range(1,10)),
                     'learning_rate': [0.1,0.5,1]
                 },
-                'Gradient Boost':{
-                    'n_estimators': list(range(1,10)),
-                    'learning_rate': [0.1,0.5,1]
+                'GradientBoost':{
+                    'n_estimators': [50, 100, 150, 200,250,300],
+                    'learning_rate': [0.01, 0.05, 0.1, 0.2, 0.5,0.8,0.1],
+                    'max_depth': list(range(1,10))
                 },
                 'Xgboost':{
-                    'n_estimators': list(range(1,10)),
-                    'learning_rate': [0.1,0.5,1],
+                    'n_estimators': [50, 100, 150, 200,250,300],
+                    'learning_rate': [0.01, 0.05, 0.1, 0.2, 0.5,0.8,0.1],
+                    'max_depth': list(range(1,10)),
                     'gamma': [0,0.1,0.5,1]
                 }
             }
 
-            model_report:dict = evaluate_model(X_train, y_train, X_test, y_test, models, params)
-            #print(model_report)
+            logging.info('Getting the report from the utils file')
+            model_report: pd.DataFrame = evaluate_model(X_train, y_train, X_test, y_test, models, params)
 
-            best_model_score = max(sorted(model_report.values()))
+            logging.info('Getting model evaluation report')
 
-            best_model_name = list(model_report.keys())[
-                list(model_report.values()).index(best_model_score)
-            ]
-        
-            logging.info(f'Best_model_name: {best_model_name}')
-
+            def score_model(row):
+                return (
+                    row['Test_Score'] * 0.4 + 
+                    row['Train_Score'] * 0.3 +  
+                    (1 - row['MSE']) * 0.2 +  
+                    row['Cross_Val_Score'] * 0.1  
+                )
+            
+            model_report['Score'] = model_report.apply(score_model, axis=1)
+            logging.info(f'Model report \n: {model_report}')
+            
+            best_model_name = model_report.loc[model_report['Score'].idxmax(), 'Model']
+            best_model_score = model_report['Score'].max()
 
             best_model = models[best_model_name]
 
-            if best_model_score<0.6:
-                raise CustomException('No best model found')
-            
+            logging.info(f'Best model {best_model_name} with score {best_model_score}')
 
             save_object(
                 file_path= self.model_trainer_config.trained_model_file_path,
@@ -103,8 +112,8 @@ class ModelTrainer:
         except Exception as e:
             logging.error(f'Error Occured: {e}')
             raise CustomException(e, sys)
-        
-        
+
+
 if __name__=='__main__':
     print('Everything is ok')
 

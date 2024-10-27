@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from src.exception import CustomException
 from sklearn.model_selection import train_test_split
 import pandas as pd
+import numpy as np
 from dataclasses import dataclass
 from src.logger import logging
 from src.components.data_transformation import DataTransformation
@@ -28,7 +29,11 @@ class DataIngestion:
         logging.info('Entered the data ingestion component')
         try:
             logging.info('Loading the data set')
-            df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'skewed_data.csv'))
+            df = pd.read_csv(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'cleaned_mobile_data.csv'))
+
+            num_cols = df.select_dtypes(exclude=['object']).columns
+            logging.info(f'The skewness of data is : \n {df[num_cols].skew().sort_values(ascending=False)}')
+
 
             os.makedirs(os.path.dirname(os.path.abspath(self.ingestion_config.raw_data_path)), exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
@@ -42,6 +47,7 @@ class DataIngestion:
             test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
             logging.info('Test Data splitted succesfully')
             logging.info('Ingestion of the data is completed')
+
             return(
                 self.ingestion_config.train_data_path,
                 self.ingestion_config.test_data_path

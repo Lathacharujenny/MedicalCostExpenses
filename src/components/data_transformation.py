@@ -9,56 +9,109 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder,StandardScaler
+from sklearn.preprocessing import OneHotEncoder,StandardScaler, FunctionTransformer
 from src.exception import CustomException
 from src.logger import logging
 from sklearn.feature_extraction.text import TfidfVectorizer
+from scipy.stats import boxcox
 
 from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path=os.path.join('artifacts',"proprocessor.pkl")
+    preprocessor_obj_file_path=os.path.join('artifacts',"preprocessor.pkl")
 
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config=DataTransformationConfig()
+    
+    def skew_log_transform(self,x):
+        return np.log1p(x)
+    
+    def skew_boxcox_transform(self,x):
+        #return np.array([boxcox(col + 1)[0] for col in x.T]).T
+        # Check for constant columns and apply Box-Cox only on non-constant columns
+        transformed = []
+        for col in x.T:
+            if np.var(col) == 0:
+                # If the column is constant, append the original column or handle accordingly
+                transformed.append(col)  # or use np.zeros_like(col) or some other method
+            else:
+                transformed.append(boxcox(col + 1)[0])  # Use boxcox transformation
+        return np.array(transformed).T
+    
+    def skew_power_transform(self,x):
+        return x ** 4
 
     def get_data_transformer_object(self):
         '''
-        This function si responsible for data trnasformation
+        This function si responsible for data transformation
         
         '''
         try:
-            numerical_columns = ['Battery_capacity(mAh)', 'Screen_size(inches)', 'Processor', 'RAM(GB)',
-                               'Internal_storage(GB)', 'Number of SIMs',
-                               'Resolution_width(px)', 'Resolution_height(px)', 'Rear_Camera(MP)',
-                                'Front_Camera(MP)']
+            logging.info('Creating the Pipeline')
+
+            log_columns = ['Internal_storage(GB)']
+
+            boxcox_columns = ['Rear_Camera(MP)', 'Front_Camera(MP)', 'RAM(GB)']
+
+            power_columns = ['Number of SIMs']
+
+            numerical_columns = ['Battery_capacity(mAh)', 'Screen_size(inches)', 'Processor',
+                                 'Resolution_width(px)', 'Resolution_height(px)']
+            
             categorical_columns =  ['Brand', 'Touchscreen', 'Operating system', 'Wi-Fi',
                              'Bluetooth', 'GPS', '3G', '4G/ LTE']
             
 
-            num_pipeline= Pipeline(
+            log_pipeline = Pipeline(
                 steps=[
-                ("imputer",SimpleImputer(strategy="median")),
-                ("scaler",StandardScaler())
+                    ('imputer', SimpleImputer(strategy='median')),
+                    ('log_transform', FunctionTransformer(self.skew_log_transform)),
+                    ('scaler', StandardScaler())
                 ]
             )
 
-            cat_pipeline=Pipeline(
+            boxcox_pipeline = Pipeline(
                 steps=[
-                ("one_hot_encoder",OneHotEncoder(handle_unknown='ignore'))
-                ])
-
-            logging.info(f"Categorical columns: {categorical_columns}")
-            logging.info(f"Numerical columns: {numerical_columns}")
-
-            preprocessor=ColumnTransformer(
-                [
-                ("num_pipeline",num_pipeline,numerical_columns),
-                ("cat_pipeline",cat_pipeline,categorical_columns)
+                    ('imputer', SimpleImputer(strategy='median')),
+                    ('boxcox_transform', FunctionTransformer(self.skew_boxcox_transform)),
+                    ('scaler', StandardScaler())
                 ]
             )
+
+            power_pipeline = Pipeline(
+                steps=[
+                    ('imputer', SimpleImputer(strategy='median')),
+                    ('power_transform', FunctionTransformer(self.skew_power_transform)),
+                    ('scaler', StandardScaler())
+                ]
+            )
+
+            num_pipeline = Pipeline(
+                steps=[
+                    ('imputer', SimpleImputer(strategy='median')),
+                    ('scaler', StandardScaler())
+                ]
+            )
+
+            cat_pipeline = Pipeline(
+                steps=[
+                    ('imputer', SimpleImputer(strategy='most_frequent')),
+                    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+                ]
+            )
+
+            preprocessor = ColumnTransformer(
+                transformers=[
+                    ('log_pipeline', log_pipeline, log_columns),
+                    ('boxcox_pipeline', boxcox_pipeline, boxcox_columns),
+                    ('power_pipeline', power_pipeline, power_columns),
+                    ('num_pipeline', num_pipeline, numerical_columns),
+                    ('cat_pipeline', cat_pipeline, categorical_columns)
+                ]
+            )
+
 
             return preprocessor
         
@@ -69,14 +122,18 @@ class DataTransformation:
 
         try:
             logging.info('Entered initiate_data_transformation')
+            
             train_df = pd.read_csv(train_path)
             test_df = pd.read_csv(test_path)
-            #print('Shape of train_df: ', train_df.shape)
-            logging.info(f'Shape of train_df: {train_df.shape}')
-            #print('Columns of train_df: ', train_df.columns)
-            logging.info(f'Columns of train_df: {train_df.columns}')
-
+           
             logging.info("Read train and test data completed")
+
+            train_df['Price'] = np.log1p(train_df['Price'])
+            test_df['Price'] = np.log1p(test_df['Price'])
+            logging.info(f'Skew of price train data {train_df["Price"].skew()}')
+            logging.info(f'Skew of price test data {test_df["Price"].skew()}')
+
+            
             logging.info("Obtaining preprocessing object")
 
             preprocessing_obj = self.get_data_transformer_object()
@@ -93,9 +150,10 @@ class DataTransformation:
             logging.info(
             f"Applying preprocessing object on training dataframe and testing dataframe."
             )
-
+            
             processed_train_data = preprocessing_obj.fit_transform(X_train_df)
             processed_test_data = preprocessing_obj.transform(X_test_df)
+
 
             logging.info(f"Saved preprocessing object.")
 

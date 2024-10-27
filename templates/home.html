@@ -1,0 +1,126 @@
+<html>
+    <body>
+        <h1>Predicting mobile prices</h1>
+
+<form action='{{url_for("predict_datapoint")}}' method="post">
+
+    <h3><legend>Enter the specifications of mobile</legend></h3>
+
+    <div>
+        <label for="brand">Brand</label>
+        <input type="text" name="brand" id="brand" placeholder="brand name">
+    </div>
+
+    <div>
+        <label for="battery_capacity">Battery Capacity(mAh)</label>
+        <input type="number" name="battery_capacity" id="battery_capacity" placeholder="battery_capacity(mAh)">
+    </div>
+
+    <div>
+        <label for="screen_size">Screen Size(inches)</label>
+        <input type="number" name="screen_size" id="screen_size" placeholder="screen_size(inches)">
+    </div>
+
+    <div>
+        <label for="touchscreen">Touchscreen</label>
+        <select name="touchscreen" id="touchscreen">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="processor">Processor</label>
+        <input type="number" name="processor" id="processor" placeholder="processor">
+    </div>
+
+    <div>
+        <label for="ram">RAM(GB)</label>
+        <input type="number" name="ram" id="ram" placeholder="ram(GB)">
+    </div>
+
+    <div>
+        <label for="internal_storage">Internal Storage(GB)</label>
+        <input type="number" name="internal_storage" id="internal_storage" placeholder="internal_storage(GB)">
+    </div>
+
+    <div>
+        <label for="operating_system">operating_system</label>
+        <input type="text" name="operating_system" id="operating_system" placeholder="operating_system">
+    </div>
+
+    <div>
+        <label for="wi_fi">WiFi</label>
+        <select name="wi_fi" id="wi_fi">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+    <div>
+        <label for="gps">GPS</label>
+        <select name="gps" id="gps">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+    <div>
+        <label for="bluetooth">Bluetooth</label>
+        <select name="bluetooth" id="bluetooth">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="number_of_sims">Number of sims</label>
+        <input type="number" name="number_of_sims" id="" placeholder="number_of_sims">
+    </div>
+
+    <div>
+        <label for="threeg">3G</label>
+        <select name="threeg" id="threeg">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="fourg_lte">4G/LTE</label>
+        <select name="fourg_lte" id="fourg_lte">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="resolution_width">Resolution Width(px)</label>
+        <input type="number" name="resolution_width" id="resolution_width" placeholder="resolution_width(px)">
+    </div>
+
+    <div>
+        <label for="resolution_height">Resolution Height(px)</label>
+        <input type="number" name="resolution_height" id="resolution_height" placeholder="resolution_height">
+    </div>
+
+    <div>
+        <label for="rear_camera">Rear Camera(MP)</label>
+        <input type="number" name="rear_camera" id="rear_camera" placeholder="rear_camera(mp)">
+    </div>
+
+
+    <div>
+        <label for="front_camera">Front Camera(MP)</label>
+        <input type="number" name="front_camera" id="" placeholder="front_camera(mp)">
+    </div>
+
+    <div>
+        <input type="submit" value="Submit" required>
+    </div>
+
+</form>
+
+<h3>
+    The predicted price is {{results}}
+</h3>
+    </body>
+</html>
