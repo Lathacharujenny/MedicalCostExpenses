@@ -37,5 +37,7 @@ Step-6
 Step-7
 1. Next write predict_pipeline.py & app.py
 ------------------------------------------------------------------
-
-   
+Step-8
+1. Create .ebextensions folder and python.config
+2. Create application.py just copy the code of app.py and paste into it just remove the line debug=True at the end of page 
+3. This application.py is created just for deploying the app in elasticbeanstalk its the rule to create 
