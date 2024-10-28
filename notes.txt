@@ -33,5 +33,9 @@ Step-5:
 Step-6
 1. Writing the code in the components folder
 2. data_ingestion.py, data_transformaiton.py, model_training.py
+------------------------------------------------------------------
+Step-7
+1. Next write predict_pipeline.py & app.py
+------------------------------------------------------------------
 
    

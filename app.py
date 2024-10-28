@@ -1,7 +1,8 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session
 import numpy as np
 import pandas as pd
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
+
 
 application = Flask(__name__)
 app = application
@@ -13,25 +14,19 @@ def index():
 
 @app.route('/predictdata', methods=['GET','POST'])
 def predict_datapoint():
-    results = None
+
     if request.method=='GET':
-        return render_template('home.html', results=results)
+        return render_template('home.html', results=None)
     else:
         data = CustomData(
                brand = request.form.get('brand').lower(),
                battery_capacity = int(request.form.get('battery_capacity')),
                screen_size = float(request.form.get('screen_size')),
-               touchscreen = request.form.get('touchscreen'),
                processor = int(request.form.get('processor')),
                ram = int(request.form.get('ram')),
                internal_storage = int(request.form.get('internal_storage')),
                operating_system = request.form.get('operating_system').lower(),
-               wi_fi = request.form.get('wi_fi'),
-               bluetooth = request.form.get('bluetooth'),
-               gps = request.form.get('gps'),
                number_of_sims = int(request.form.get('number_of_sims')),
-               threeg = request.form.get('threeg'),
-               fourg_lte = request.form.get('fourg_lte'),
                resolution_width = int(request.form.get('resolution_width')),
                resolution_height = int(request.form.get('resolution_height')),
                rear_camera = int(request.form.get('rear_camera')),

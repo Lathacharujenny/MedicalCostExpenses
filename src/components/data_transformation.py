@@ -28,18 +28,6 @@ class DataTransformation:
     def skew_log_transform(self,x):
         return np.log1p(x)
     
-    def skew_boxcox_transform(self,x):
-        #return np.array([boxcox(col + 1)[0] for col in x.T]).T
-        # Check for constant columns and apply Box-Cox only on non-constant columns
-        transformed = []
-        for col in x.T:
-            if np.var(col) == 0:
-                # If the column is constant, append the original column or handle accordingly
-                transformed.append(col)  # or use np.zeros_like(col) or some other method
-            else:
-                transformed.append(boxcox(col + 1)[0])  # Use boxcox transformation
-        return np.array(transformed).T
-    
     def skew_power_transform(self,x):
         return x ** 4
 
@@ -51,31 +39,19 @@ class DataTransformation:
         try:
             logging.info('Creating the Pipeline')
 
-            log_columns = ['Internal_storage(GB)']
-
-            boxcox_columns = ['Rear_Camera(MP)', 'Front_Camera(MP)', 'RAM(GB)']
+            log_columns = ['Internal_storage(GB)', 'Rear_Camera(MP)', 'Front_Camera(MP)', 'RAM(GB)', 'Resolution_width(px)']
 
             power_columns = ['Number of SIMs']
 
-            numerical_columns = ['Battery_capacity(mAh)', 'Screen_size(inches)', 'Processor',
-                                 'Resolution_width(px)', 'Resolution_height(px)']
+            numerical_columns = ['Battery_capacity(mAh)', 'Screen_size(inches)', 'Processor', 'Resolution_height(px)']
             
-            categorical_columns =  ['Brand', 'Touchscreen', 'Operating system', 'Wi-Fi',
-                             'Bluetooth', 'GPS', '3G', '4G/ LTE']
+            categorical_columns =  ['Brand', 'Operating system']
             
 
             log_pipeline = Pipeline(
                 steps=[
                     ('imputer', SimpleImputer(strategy='median')),
                     ('log_transform', FunctionTransformer(self.skew_log_transform)),
-                    ('scaler', StandardScaler())
-                ]
-            )
-
-            boxcox_pipeline = Pipeline(
-                steps=[
-                    ('imputer', SimpleImputer(strategy='median')),
-                    ('boxcox_transform', FunctionTransformer(self.skew_boxcox_transform)),
                     ('scaler', StandardScaler())
                 ]
             )
@@ -105,7 +81,6 @@ class DataTransformation:
             preprocessor = ColumnTransformer(
                 transformers=[
                     ('log_pipeline', log_pipeline, log_columns),
-                    ('boxcox_pipeline', boxcox_pipeline, boxcox_columns),
                     ('power_pipeline', power_pipeline, power_columns),
                     ('num_pipeline', num_pipeline, numerical_columns),
                     ('cat_pipeline', cat_pipeline, categorical_columns)
