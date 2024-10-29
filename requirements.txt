@@ -1,9 +1,7 @@
-pandas
-numpy
-seaborn
-matplotlib
-plotly
-scikit-learn
-xgboost
-Flask
+pandas==2.2.3
+numpy==2.1.2
+scikit-learn==1.5.2
+scipy==1.14.1
+xgboost==2.1.1
+Flask==3.0.3
 -e .

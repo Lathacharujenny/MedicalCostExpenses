@@ -11,6 +11,9 @@ __pycache__/
 # Ignore notes.txt file
 notes.txt
 
+# Ignore notebook folder
+notebook/
+
 # Distribution / packaging
 .Python
 build/
