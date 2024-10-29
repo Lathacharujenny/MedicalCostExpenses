@@ -11,8 +11,6 @@ __pycache__/
 # Ignore notes.txt file
 notes.txt
 
-# Ignore articacts  folder
-artifacts
 
 # Ignore notebook  folder
 notebook
