@@ -21,7 +21,7 @@ To set up this project locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/username/mobilepriceprediction.git
+   git clone https://github.com/Lathacharujenny/MobileCostPrediction.git
    ```
 2. Navigate to the project directory:
     ```bash
