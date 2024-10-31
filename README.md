@@ -6,6 +6,7 @@ A machine learning application that predicts smartphone prices based on various 
 - [Description](#description)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Notes](#notes)
 - [Features](#features)
 - [Deployment](#deployment)
 - [Heroku-Deploy](#heroku-deploy)
@@ -37,6 +38,9 @@ To run the application locally, execute the following command:
        python app.py
    ```
 Once the application is running, open your web browser and navigate to http://127.0.0.1:5000 to access the mobile price prediction interface.
+
+## Notes
+- I have created notes text file for you to write the code in step by step will be helpful if you are a beginner
 
 ## Features
 - Predicts smartphone prices based on user-inputted specifications.
