@@ -41,7 +41,7 @@ Once the application is running, open your web browser and navigate to http://12
 ## Features
 - Predicts smartphone prices based on user-inputted specifications.
 - Modular code structure for easy maintenance and scalability.
-- Interactive web interface for a user-friendly experience.
+- Interactive web interface built with Flask for a user-friendly experience.
 - Data visualization for insights into price trends.
 
 ## Deployement
