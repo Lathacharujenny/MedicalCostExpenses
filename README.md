@@ -9,7 +9,7 @@ A machine learning application that predicts smartphone prices based on various 
 - [Notes](#notes)
 - [Features](#features)
 - [Deployment](#deployment)
-- [Heroku-Deploy](#heroku-deploy)
+
   
 ## Description
 
@@ -49,11 +49,8 @@ Once the application is running, open your web browser and navigate to http://12
 - Data visualization for insights into price trends.
 
 ## Deployement
-The application is deployed on Heroku. You can access it at: https://mobilepriceprediction-6b6454291f79.herokuapp.com/
+The application is deployed on Render. You can access it at: https://mobilepriceprediction.onrender.com
 
-## Heroku-Deploy
-- I have created another branch in this repository named "heroku-deploy".
-- I have kept only folders which are necessary to upload to heroku
 
 
    
