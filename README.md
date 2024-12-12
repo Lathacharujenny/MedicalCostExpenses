@@ -48,7 +48,7 @@ Once the application is running, open your web browser and navigate to http://12
 - Interactive web interface built with Flask for a user-friendly experience.
 - Data visualization for insights into price trends.
 
-## Deployement
+## Deployment
 The application is deployed on Render. You can access it at: https://mobilepriceprediction.onrender.com
 
 
